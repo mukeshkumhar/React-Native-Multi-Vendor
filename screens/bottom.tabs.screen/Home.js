@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, ScrollView,ImageBackground, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, ImageBackground, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native'
 
@@ -39,7 +39,7 @@ const ProductCard = ({ title, price, image, description }) => (
     </TouchableOpacity>
 );
 
-const ProductShow=({ title, price, image, description}) => (
+const ProductShow = ({ title, price, image, description }) => (
     <TouchableOpacity style={styles.productCard1}>
         <Image style={styles.productImage1} source={image} />
         <View style={styles.productInfo1}>
@@ -75,7 +75,7 @@ const Home = () => {
                                 <Text style={styles.viewAll}>View All</Text>
                             </TouchableOpacity>
                         </View>
-                        
+
                         <Text style={styles.sectionSubTitle}>You've never seen it before! </Text>
                         <ScrollView
                             horizontal
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
     },
     // Product suggestion Grid 
-    productSuggetionGrid:{
+    productSuggetionGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
