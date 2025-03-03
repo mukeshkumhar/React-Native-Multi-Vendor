@@ -1,6 +1,8 @@
-import { StyleSheet, Text, View, Image, ScrollView, ImageBackground, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, ImageBackground, TouchableOpacity, StatusBar } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native'
+import { useNavigation } from '@react-navigation/native';
+import Sale from '../HomePage/Sale'
 
 
 const productData = [
@@ -50,51 +52,54 @@ const ProductShow = ({ title, price, image, description }) => (
     </TouchableOpacity>
 )
 const Home = () => {
+    const navigation = useNavigation();
     return (
-        <SafeAreaView style={styles.safeArea}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.container}>
-                    <ImageBackground
-                        source={require('../../assets/images/BigBanner.jpg')} // Make sure to add your image
-                        style={styles.banner}
-                        resizeMode="cover"
-                    >
-                        <View style={styles.overlay}>
-                            <Text style={styles.bannerTitle}>Fashion sale</Text>
-                            <TouchableOpacity style={styles.button} onPress={() => { }}>
-                                <Text style={styles.buttonText}>Check</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </ImageBackground>
-
-                    {/* Add more content here */}
-                    <View style={styles.productSection}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>New</Text>
-                            <TouchableOpacity onPress={() => {/* Add your navigation logic here */ }}>
-                                <Text style={styles.viewAll}>View All</Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        <Text style={styles.sectionSubTitle}>You've never seen it before! </Text>
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={styles.productList}
+        <>
+            <SafeAreaView style={styles.safeArea}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.container}>
+                        <ImageBackground
+                            source={require('../../assets/images/BigBanner.jpg')} // Make sure to add your image
+                            style={styles.banner}
+                            resizeMode="cover"
                         >
+                            <View style={styles.overlay}>
+                                <Text style={styles.bannerTitle}>Fashion sale</Text>
+                                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Sale')}>
+                                    <Text style={styles.buttonText}>Check</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </ImageBackground>
+
+                        {/* Add more content here */}
+                        <View style={styles.productSection}>
+                            <View style={styles.sectionHeader}>
+                                <Text style={styles.sectionTitle}>New</Text>
+                                <TouchableOpacity onPress={() => {/* Add your navigation logic here */ }}>
+                                    <Text style={styles.viewAll}>View All</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <Text style={styles.sectionSubTitle}>You've never seen it before! </Text>
+                            <ScrollView
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={styles.productList}
+                            >
+                                {productData.map((product) => (
+                                    <ProductCard key={product.id} {...product} />
+                                ))}
+                            </ScrollView>
+                        </View>
+                        <View style={styles.productSuggetionGrid}>
                             {productData.map((product) => (
-                                <ProductCard key={product.id} {...product} />
+                                <ProductShow key={product.id} {...product} />
                             ))}
-                        </ScrollView>
+                        </View>
                     </View>
-                    <View style={styles.productSuggetionGrid}>
-                        {productData.map((product) => (
-                            <ProductShow key={product.id} {...product} />
-                        ))}
-                    </View>
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+                </ScrollView>
+            </SafeAreaView>
+        </>
     )
 }
 
@@ -178,7 +183,7 @@ const styles = StyleSheet.create({
     },
     sectionSubTitle: {
         fontSize: 12,
-        marginLeft: 10,
+        marginLeft: 0,
         marginBottom: 10,
         color: 'gray',
     },

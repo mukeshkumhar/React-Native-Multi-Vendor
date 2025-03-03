@@ -1,16 +1,31 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { View, Image, StyleSheet, Text, } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { View, Image, StyleSheet, Text, SafeAreaView, StatusBar, } from "react-native";
 import Animated from "react-native-reanimated";
 import Home from "../screens/bottom.tabs.screen/Home";
 import Cart from "../screens/bottom.tabs.screen/Cart";
 import Profile from "../screens/bottom.tabs.screen/Profile";
 import Like from "../screens/bottom.tabs.screen/Like";
 import Shop from "../screens/bottom.tabs.screen/Shop";
+import Sale from "../screens/HomePage/Sale";
 
 
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const HomePage = () => {
+    return (
+        <>
+                <Stack.Navigator>
+                    <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
+                    <Stack.Screen name="Sale" component={Sale} />
+                </Stack.Navigator>
+
+        </>
+    );
+};
 
 const Tabs = () => {
     return (
@@ -26,11 +41,11 @@ const Tabs = () => {
                     elevation: 0,
                     backgroundColor: '#ffffff',
                     // borderRadius: 15,
-                    height: 70,
+                    height: 90,
                     ...styles.shadow,
                 }
             }}>
-            <Tab.Screen name="Home" component={Home} options={{
+            <Tab.Screen name="Home" component={HomePage} options={{
                 tabBarIcon: ({ focused }) => (
                     <View style={{ alignItems: 'center', justifyContent: 'center', top: 0, width: 50, }}>
                         <View style={{ width: 40, height: 4, top: 5, backgroundColor: focused ? '#e32f44' : '#ffffff', borderRadius: 20 }}></View>
@@ -65,8 +80,8 @@ const Tabs = () => {
                         {focused && <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12, top: 10 }}>Shop</Text>}
                     </View>
                 ),
-            }}/>
-            
+            }} />
+
             <Tab.Screen name="Cart" component={Cart} options={{
                 tabBarIcon: ({ focused }) => (
                     <View style={{ alignItems: 'center', justifyContent: 'center', top: 0, width: 50, }}>
