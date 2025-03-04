@@ -46,9 +46,38 @@ const ProductItem = ({ title, price, image, quantity }) => (
 const Cart = () => {
     const [couponCode, setCouponCode] = useState('');
     return (
-        <View style={styles.container}>
-            <Text>Cart</Text>
-        </View>
+        <SafeAreaView>
+            <ScrollView>
+                <View style={styles.container}>
+                    <Text style={styles.headerText}>My Bag</Text>
+                    <View style={styles.ItemCard}>
+                        {product.map((item) => (
+                            <ProductItem key={item.id} {...item} />
+                        ))}
+                    </View>
+                    <View style={styles.couponContainer}>
+                        <TextInput
+                            style={styles.couponInput}
+                            placeholder="Enter your promo code"
+                            value={couponCode}
+                            onChangeText={setCouponCode}
+                        />
+                        <TouchableOpacity style={styles.applyButton}>
+                            <Image source={require('../../assets/icons/blackright.png')} style={{ width: 45, height: 45 }} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.bottomItems}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 10, marginTop: 20, marginLeft: 20, marginRight: 30 }}>
+                            <Text style={styles.total}>Total amount:</Text>
+                            <Text style={{ fontSize: 18, fontWeight: "bold" }}>$199.98</Text>
+                        </View>
+                        <TouchableOpacity style={styles.checkoutButton}>
+                            <Text style={styles.checkoutText}>Check out</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     )
 }
 
