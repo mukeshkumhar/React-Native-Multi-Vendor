@@ -4,7 +4,7 @@ import React from 'react'
 const Like = () => {
     return (
         <View style={styles.container}>
-            <Text>Like</Text>
+            <Text>Like Screen</Text>
         </View>
     )
 }
