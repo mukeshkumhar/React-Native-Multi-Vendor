@@ -11,6 +11,7 @@ import {
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../authentication/useAuth';
+import { authService } from '../../services/authService';
 import axios from 'axios';
 
 const API_URL = 'http://10.0.2.2:3000/api/v1'; // Replace with your API URL
@@ -18,6 +19,7 @@ const API_URL = 'http://10.0.2.2:3000/api/v1'; // Replace with your API URL
 const Login = () => {
     const navigation = useNavigation();
     const { login } = useAuth();
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -42,21 +44,24 @@ const Login = () => {
 
     const handleLogin = async () => {
         if (validateForm()) {
+            setLoading(true);
             try {
-                const response = await axios.post(`${API_URL}/users/login`, {
+                const response = await authService.login({
                     email: formData.email,
                     password: formData.password
                 });
 
-                if (response.data.success) {
-                    await login(response.data);
+                if (response.success) {
+                    await login(response);
                 } else {
-                    Alert.alert('Error', response.data.message || 'Login failed');
+                    Alert.alert('Error', response.message || 'Login failed');
                 }
             } catch (error) {
                 const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
                 Alert.alert('Error', errorMessage);
                 console.error('Login error:', error);
+            } finally {
+                setLoading(false);
             }
         }
     };
@@ -97,8 +102,14 @@ const Login = () => {
                         <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                        <Text style={styles.buttonText}>Login</Text>
+                    <TouchableOpacity
+                        style={[styles.button, loading && styles.buttonDisabled]}
+                        onPress={handleLogin}
+                        disabled={loading}
+                    >
+                        <Text style={styles.buttonText}>
+                            {loading ? 'Logging in...' : 'Login'}
+                        </Text>
                     </TouchableOpacity>
 
                     <View style={styles.registerContainer}>
@@ -192,4 +203,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginLeft: 5,
     },
+    buttonDisabled: {
+        backgroundColor: '#cccccc',
+    }
 })

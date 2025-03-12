@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, Image, ScrollView, ImageBackground, TouchableOpacity, StatusBar } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Image, ScrollView, ImageBackground, TouchableOpacity, onPress, ActivityIndicator } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
-import Sale from '../HomePage/Sale'
+import { productService } from '../../services/productService';
 
 
 const productData = [
@@ -30,29 +30,90 @@ const productData = [
     // Add more products as needed
 ];
 
-const ProductCard = ({ title, price, image, description }) => (
-    <TouchableOpacity style={styles.productCard}>
-        <Image source={image} style={styles.productImage} />
-        <View style={styles.productInfo}>
-            <Text style={styles.productTitle}>{title}</Text>
-            <Text style={styles.productDescription}>{description}</Text>
-            <Text style={styles.productPrice}>{price}</Text>
-        </View>
-    </TouchableOpacity>
-);
+const ProductCard = ({ title, price, images, description, onPress }) => {
+    const [imageError, setImageError] = useState(false);
+    const defaultImage = require('../../assets/images/image_not_found.png');
 
-const ProductShow = ({ title, price, image, description }) => (
-    <TouchableOpacity style={styles.productCard1}>
-        <Image style={styles.productImage1} source={image} />
-        <View style={styles.productInfo1}>
-            <Text style={styles.productTitle1}>{title}</Text>
-            <Text style={styles.productDescription1}>{description}</Text>
-            <Text style={styles.productPrice1}>{price}</Text>
-        </View>
-    </TouchableOpacity>
-)
+    const imageUrl = images && images.length > 0 ? images[0].url : null;
+    return (
+        <TouchableOpacity style={styles.productCard} onPress={onPress}>
+            <Image
+                source={imageUrl ? { uri: imageUrl } : defaultImage}
+                style={styles.productImage}
+                onError={() => setImageError(true)}
+                resizeMode="cover" />
+            <View style={styles.productInfo}>
+                <Text style={styles.productTitle}>{title}</Text>
+                <Text style={styles.productDescription}>{description}</Text>
+                <Text style={styles.productPrice}>{price}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
+
+const ProductShow = ({ title, price, images, description, onPress }) => {
+    const [imageError, setImageError] = useState(false);
+    const defaultImage = require('../../assets/images/image_not_found.png');
+    console.log('Images received:', images);
+
+    const imageUrl = images && images.length > 0 ? images[0].url : null;
+    console.log("Image URL: " + imageUrl);
+    return (
+        <TouchableOpacity style={styles.productCard1} onPress={onPress}>
+            <Image
+                source={imageUrl ? { uri: imageUrl } : defaultImage}
+                style={styles.productImage1}
+                onError={() => setImageError(true)}
+                resizeMode="cover" />
+            <View style={styles.productInfo1}>
+                <Text style={styles.productTitle1}>{title}</Text>
+                <Text style={styles.productDescription1}>{description}</Text>
+                <Text style={styles.productPrice1}>{price}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
 const Home = () => {
     const navigation = useNavigation();
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const response = await productService.getAllProducts();
+            if (response.success) {
+                console.log('Products:', response.data);
+                setProducts(response.data);
+            }
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            setError('Failed to load products');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#e32f45" />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+            </View>
+        );
+    }
+
     return (
         <>
             <SafeAreaView style={styles.safeArea}>
@@ -86,14 +147,28 @@ const Home = () => {
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={styles.productList}
                             >
-                                {productData.map((product) => (
-                                    <ProductCard key={product.id} {...product} />
+                                {products.map((product) => (
+                                    <ProductCard
+                                        key={product._id}
+                                        title={product.name}
+                                        price={product.price}
+                                        images={product.images}
+                                        description={product.description}
+                                        onPress={() => navigation.navigate('Product', { productId: product._id })}
+                                    />
                                 ))}
                             </ScrollView>
                         </View>
                         <View style={styles.productSuggetionGrid}>
-                            {productData.map((product) => (
-                                <ProductShow key={product.id} {...product} />
+                            {products.map((product) => (
+                                <ProductShow
+                                    key={product._id}
+                                    title={product.name}
+                                    price={product.price}
+                                    images={product.images}
+                                    description={product.description}
+                                    onPress={() => navigation.navigate('Product', { productId: product._id })}
+                                />
                             ))}
                         </View>
                     </View>
@@ -103,6 +178,25 @@ const Home = () => {
     )
 }
 
+const additionalStyles = StyleSheet.create({
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    errorText: {
+        color: '#e32f45',
+        fontSize: 16,
+        textAlign: 'center',
+    }
+});
+
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
@@ -111,6 +205,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        marginBottom: 20,
     },
     // Poster image style
     banner: {
@@ -195,7 +290,7 @@ const styles = StyleSheet.create({
     productCard: {
         width: 160,
         marginRight: 15,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#ffffff',
         borderRadius: 12,
         shadowColor: '#000',
         // shadowOffset: {
@@ -288,6 +383,7 @@ const styles = StyleSheet.create({
         fontFamily: "metropolis-bold",
         color: '#e32f45',
     },
+    ...additionalStyles
 })
 export default Home
 

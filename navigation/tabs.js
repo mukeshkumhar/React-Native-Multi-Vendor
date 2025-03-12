@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Image, StyleSheet, Text, SafeAreaView, StatusBar, } from "react-native";
+import { View, Image, StyleSheet, Text, SafeAreaView, StatusBar, TouchableOpacity } from "react-native";
 import Animated from "react-native-reanimated";
 import Home from "../screens/bottom.tabs.screen/Home";
 import Cart from "../screens/bottom.tabs.screen/Cart";
@@ -9,6 +9,7 @@ import Profile from "../screens/bottom.tabs.screen/Profile";
 import Like from "../screens/bottom.tabs.screen/Like";
 import Shop from "../screens/bottom.tabs.screen/Shop";
 import Sale from "../screens/HomePage/Sale";
+import Product from "../screens/HomePage/Product";
 
 
 
@@ -18,10 +19,11 @@ const Stack = createNativeStackNavigator();
 const HomePage = () => {
     return (
         <>
-                <Stack.Navigator>
-                    <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
-                    <Stack.Screen name="Sale" component={Sale} />
-                </Stack.Navigator>
+            <Stack.Navigator>
+                <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+                <Stack.Screen name="Sale" component={Sale} />
+                <Stack.Screen name="Product" component={Product} />
+            </Stack.Navigator>
 
         </>
     );
