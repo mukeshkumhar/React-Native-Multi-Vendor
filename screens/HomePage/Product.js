@@ -1,6 +1,7 @@
 import {
     ScrollView,
     SafeAreaView,
+    SafeAreaViewBase,
     StyleSheet,
     Text,
     View,
@@ -8,6 +9,7 @@ import {
     Image,
     ActivityIndicator,
     StatusBar,
+    Platform,
     TouchableOpacity,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
@@ -58,161 +60,93 @@ const Product = ({ route }) => {
         );
     }
 
-    const renderImageSlider = () => {
-        return (
-            <View style={styles.sliderContainer}>
-                <ScrollView
-                    horizontal
-                    pagingEnabled
-                    showsHorizontalScrollIndicator={false}
-                    onMomentumScrollEnd={(event) => {
-                        const slideIndex = Math.round(
-                            event.nativeEvent.contentOffset.x / width
-                        );
-                        setActiveSlide(slideIndex);
-                    }}
-                >
-                    {product.images.map((image, index) => (
-                        <View key={index} style={styles.slide}>
-                            {imageLoading && (
-                                <ActivityIndicator
-                                    style={styles.loader}
-                                    size="large"
-                                    color="#e32f45"
-                                />
-                            )}
-                            <Image
-                                source={{ uri: image.url }}
-                                style={styles.image}
-                                onLoadStart={() => setImageLoading(true)}
-                                onLoadEnd={() => setImageLoading(false)}
-                                resizeMode="cover"
-                            />
-                        </View>
-                    ))}
-                </ScrollView>
-                <View style={styles.pagination}>
-                    {product.images.map((_, index) => (
-                        <View
-                            key={index}
-                            style={[
-                                styles.paginationDot,
-                                index === activeSlide && styles.paginationDotActive,
-                            ]}
-                        />
-                    ))}
-                </View>
-            </View>
-        );
-    };
 
-    const renderProductInfo = () => {
-        return (
-            <View style={styles.infoContainer}>
-                <Text style={styles.title}>{product.name}</Text>
-                <Text style={styles.price}>₹{product.price}</Text>
 
-                <View style={styles.statusContainer}>
-                    <Text style={styles.label}>Status: </Text>
-                    <View style={[
-                        styles.statusBadge,
-                        { backgroundColor: product.status === 'active' ? '#4CAF50' : '#FF5252' }
-                    ]}>
-                        <Text style={styles.statusText}>
-                            {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
-                        </Text>
-                    </View>
-                </View>
-
-                <View style={styles.quantityContainer}>
-                    <Text style={styles.label}>Available Quantity: </Text>
-                    <Text style={styles.quantity}>{product.stockQuantity}</Text>
-                </View>
-
-                <View style={styles.descriptionContainer}>
-                    <Text style={styles.label}>Description:</Text>
-                    <Text style={styles.description}>{product.description}</Text>
-                </View>
-            </View>
-        );
-    };
     return (
         <>
             <StatusBar hidden={false}
-                backgroundColor="transparent"
-                translucent={true}
+                backgroundColor="white"
+                translucent={false}
                 barStyle="dark-content" />
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={styles.imageSlider}>
-                        <ScrollView
-                            horizontal
-                            pagingEnabled
-                            showsHorizontalScrollIndicator={false}
-                            onMomentumScrollEnd={(e) => {
-                                const slide = Math.round(
-                                    e.nativeEvent.contentOffset.x / width
-                                );
-                                setActiveSlide(slide);
-                            }}
-                        >
-                            {product.images.map((image, index) => (
-                                <View key={index} style={styles.slide}>
-                                    {imageLoading && (
-                                        <ActivityIndicator
-                                            style={styles.imageLoader}
-                                            size="large"
-                                            color="#e32f45"
+                    <View style={styles.container}>
+                        <View style={styles.imageSlider}>
+                            <ScrollView
+                                horizontal
+                                pagingEnabled
+                                showsHorizontalScrollIndicator={false}
+                                onMomentumScrollEnd={(e) => {
+                                    const slide = Math.round(
+                                        e.nativeEvent.contentOffset.x / width
+                                    );
+                                    setActiveSlide(slide);
+                                }}
+                            >
+                                {product.images.map((image, index) => (
+                                    <View key={index} style={styles.slide}>
+                                        {imageLoading && (
+                                            <ActivityIndicator
+                                                style={styles.imageLoader}
+                                                size="large"
+                                                color="#e32f45"
+                                            />
+                                        )}
+                                        <Image
+                                            source={{ uri: image.url }}
+                                            style={styles.image}
+                                            onLoadStart={() => setImageLoading(true)}
+                                            onLoadEnd={() => setImageLoading(false)}
+                                            resizeMode="cover"
                                         />
-                                    )}
-                                    <Image
-                                        source={{ uri: image.url }}
-                                        style={styles.image}
-                                        onLoadStart={() => setImageLoading(true)}
-                                        onLoadEnd={() => setImageLoading(false)}
-                                        resizeMode="cover"
+                                    </View>
+                                ))}
+                            </ScrollView>
+                            <View style={styles.pagination}>
+                                {product.images.map((_, index) => (
+                                    <View
+                                        key={index}
+                                        style={[
+                                            styles.dot,
+                                            activeSlide === index && styles.activeDot
+                                        ]}
                                     />
-                                </View>
-                            ))}
-                        </ScrollView>
-                        <View style={styles.pagination}>
-                            {product.images.map((_, index) => (
-                                <View
-                                    key={index}
-                                    style={[
-                                        styles.dot,
-                                        activeSlide === index && styles.activeDot
-                                    ]}
-                                />
-                            ))}
+                                ))}
+                            </View>
                         </View>
-                    </View>
 
-                    <View style={styles.productInfo}>
-                        <View style={styles.titlePrice}>
-                            <Text style={styles.title}>{product.name}</Text>
-                            <Text style={styles.price}>₹{product.price}</Text>
+                        <View style={styles.productInfo}>
+                            <View style={styles.titlePrice}>
+                                <Text style={styles.title}>{product.name}</Text>
+                                <Text style={styles.price}>₹{product.price}</Text>
+                            </View>
+                            <Text style={styles.status}>{product.sku}</Text>
+                            <Text style={styles.description}>{product.description}</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop:5,marginBottom:5 }}>
+                                <View style={{ alignItems: 'center', justifyContent: 'center', width: 120, borderWidth: 1, borderRadius: 10, borderColor: "#F01F0E", backgroundColor: '#F5F5F5' }}>
+                                    <Text style={{ justifyContent: "center", alignItems: "center", padding: 10 }}>{product.specifications.Color}</Text>
+                                </View>
+                                <View style={{ alignItems: 'center', justifyContent: 'center', width: 120, borderWidth: 1, borderRadius: 10, borderColor: "#F01F0E", backgroundColor: '#F5F5F5' }}>
+                                    <Text style={{ justifyContent: "center", alignItems: "center", padding: 10 }}>{product.specifications.Size}</Text>
+                                </View>
+                                <View style={{ alignItems: 'center', justifyContent: 'center', width: 120, borderWidth: 1, borderRadius: 10, borderColor: "#F01F0E", backgroundColor: '#F5F5F5' }}>
+                                    <Text style={{ justifyContent: "center", alignItems: "center", padding: 10 }}>{product.specifications.Weight}</Text>
+                                </View>
+                            </View>
+
+
+                            <Text style={styles.status}>
+                                Status: {product.status.toUpperCase()}
+                            </Text>
+                            <Text style={styles.quantity}>
+                                Available Quantity: {product.stockQuantity}
+                            </Text>
+                            <TouchableOpacity>
+                                <Text style={styles.addToCart}>Add to Cart</Text>
+                            </TouchableOpacity>
+
+
                         </View>
-                        <Text style={styles.status}>{product.sku}</Text>
-                        <Text style={styles.description}>{product.description}</Text>
-                        <View>
-                            <Text>{product.specifications.Color}</Text>
-                            <Text>{product.specifications.Size}</Text>
-                            <Text>{product.specifications.Weight}</Text>
-                        </View>
-                        
-                        
-                        <Text style={styles.status}>
-                            Status: {product.status.toUpperCase()}
-                        </Text>
-                        <Text style={styles.quantity}>
-                            Available Quantity: {product.stockQuantity}
-                        </Text>
-                        <TouchableOpacity>
-                            <Text style={styles.addToCart}>Add to Cart</Text>
-                        </TouchableOpacity>
-                        
-                        
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -223,10 +157,15 @@ const Product = ({ route }) => {
 export default Product
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        marginBottom: 70,
+    },
     container: {
         flex: 1,
-        backgroundColor: '#F5F5F5',
-        marginBottom: 70,
+    },
+    scrollView: {
+        flex: 1,
     },
     loadingContainer: {
         flex: 1,
@@ -247,12 +186,12 @@ const styles = StyleSheet.create({
         height: 500,
         width: 'width',
         position: 'relative',
-        
+
     },
     slide: {
         width: width,
         height: width,
-        
+
     },
     image: {
         width: '100%',
@@ -285,7 +224,7 @@ const styles = StyleSheet.create({
     productInfo: {
         padding: 20,
     },
-    titlePrice:{
+    titlePrice: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -306,7 +245,7 @@ const styles = StyleSheet.create({
     status: {
         fontSize: 16,
         fontFamily: 'metropolis-medium',
-        marginBottom: 5,
+        marginBottom: 15,
     },
     quantity: {
         fontSize: 16,

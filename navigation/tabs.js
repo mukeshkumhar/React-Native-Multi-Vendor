@@ -13,6 +13,7 @@ import Product from "../screens/HomePage/Product";
 
 
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -21,8 +22,10 @@ const HomePage = () => {
         <>
             <Stack.Navigator>
                 <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
-                <Stack.Screen name="Sale" component={Sale} />
-                <Stack.Screen name="Product" component={Product} />
+                <Stack.Screen name="Product" component={Product}
+                    options={{ headerShown: true, }} />
+                <Stack.Screen name="Sale" component={Sale} options={{ headerShown: true }} />
+
             </Stack.Navigator>
 
         </>
@@ -48,6 +51,7 @@ const Tabs = () => {
                 }
             }}>
             <Tab.Screen name="Home" component={HomePage} options={{
+
                 tabBarIcon: ({ focused }) => (
                     <View style={{ alignItems: 'center', justifyContent: 'center', top: 0, width: 50, }}>
                         <View style={{ width: 40, height: 4, top: 5, backgroundColor: focused ? '#e32f44' : '#ffffff', borderRadius: 20 }}></View>
